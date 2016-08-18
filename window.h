@@ -26,7 +26,7 @@
 
 #pragma once
 
-#include <curses.h>
+#include <memory>
 
 namespace tui {
 
@@ -36,9 +36,8 @@ class Window {
   ~Window();
 
  private:
-  WINDOW*  ptr_;
-  int      height_, width_;
-  int      ypos_, xpos_;
+  class Impl;
+  std::unique_ptr<Impl> impl_;
 
   Window(const Window&) = delete;
   void operator=(const Window&) = delete;

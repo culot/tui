@@ -24,19 +24,32 @@
  * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
+#include <curses.h>
+
 #include "window.h"
+
 
 namespace tui {
 
-Window::Window()
-  : ypos_(0), xpos_(0) {
-  getmaxyx(stdscr, height_, width_);
+class Window::Impl {
+ public:
+  WINDOW*  ptr    {nullptr};
+  int      height {0};
+  int      width  {0};
+  int      ypos   {0};
+  int      xpos   {0};
+};
 
-  ptr_ = newwin(height_, width_, ypos_, xpos_);
+
+Window::Window()
+  : impl_{new Impl} {
+  getmaxyx(stdscr, impl_->height, impl_->width);
+
+  impl_->ptr = newwin(impl_->height, impl_->width, impl_->ypos, impl_->xpos);
 }
 
 Window::~Window() {
-  delwin(ptr_);
+  delwin(impl_->ptr);
 }
 
 }
