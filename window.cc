@@ -43,8 +43,8 @@ class Window::Impl {
 
 Window::Window()
   : impl_{new Impl} {
-  getmaxyx(stdscr, impl_->height, impl_->width);
-
+  impl_->height = LINES;
+  impl_->width = COLS;
   impl_->ptr = newwin(impl_->height, impl_->width, impl_->ypos, impl_->xpos);
 }
 
