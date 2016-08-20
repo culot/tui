@@ -35,8 +35,15 @@ int main(int argc, char** argv) {
   cbreak();
   noecho();
   curs_set(0);
+  refresh();
 
-  tui::Window myWin;
+  tui::Window myWin(COLS, 10, 0, 0);
+  myWin.draw();
+
+  tui::Window myWin2(COLS, LINES - 11, 0, 10);
+  myWin2.draw();
+
+  refresh();
 
   getch();
 
