@@ -27,6 +27,7 @@
 #pragma once
 
 #include <memory>
+#include <string>
 
 namespace tui {
 
@@ -37,9 +38,9 @@ class Window {
   ~Window();
 
   void draw();
+  void print(const std::string& line);
   void resize(int width, int height);
   void move(int xpos, int ypos);
-  void toggleBorder();
 
  private:
   class Impl;

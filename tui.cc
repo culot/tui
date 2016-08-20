@@ -38,6 +38,15 @@ int main(int argc, char** argv) {
   refresh();
 
   tui::Window myWin(COLS, 10, 0, 0);
+  for (auto i = 0; i < 10; ++i) {
+    myWin.print("Lorem ipsum dolor sit amet,");
+    myWin.print("consectetur adipiscing elit,");
+    myWin.print("sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.");
+    myWin.print("Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.");
+    myWin.print("Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur.");
+    myWin.print("Excepteur sint occaecat cupidatat non proident,");
+    myWin.print("sunt in culpa qui officia deserunt mollit anim id est laborum.");
+  }
   myWin.draw();
 
   tui::Window myWin2(COLS, LINES - 11, 0, 10);
