@@ -33,23 +33,52 @@ namespace tui {
 
 class Window::Impl {
  public:
-  WINDOW*  ptr    {nullptr};
-  int      height {0};
-  int      width  {0};
+  WINDOW*  win    {nullptr};
+  int      height {LINES};
+  int      width  {COLS};
+
   int      ypos   {0};
   int      xpos   {0};
+  bool     border {true};
 };
 
 
 Window::Window()
   : impl_{new Impl} {
-  impl_->height = LINES;
-  impl_->width = COLS;
-  impl_->ptr = newwin(impl_->height, impl_->width, impl_->ypos, impl_->xpos);
+  impl_->win = newwin(impl_->height, impl_->width, impl_->ypos, impl_->xpos);
+}
+
+Window::Window(int width, int height, int xpos, int ypos)
+  : Window() {
+  resize(width, height);
+  move(xpos, ypos);
 }
 
 Window::~Window() {
-  delwin(impl_->ptr);
+  delwin(impl_->win);
+}
+
+void Window::draw() {
+  if (impl_->border) {
+    box(impl_->win, 0, 0);
+  }
+  wrefresh(impl_->win);
+}
+
+void Window::resize(int width, int height) {
+  impl_->width = width;
+  impl_->height = height;
+  wresize(impl_->win, impl_->height, impl_->width);
+}
+
+void Window::move(int xpos, int ypos) {
+  impl_->xpos = xpos;
+  impl_->ypos = ypos;
+  mvwin(impl_->win, impl_->ypos, impl_->xpos);
+}
+
+void Window::toggleBorder() {
+  impl_->border = impl_->border ? false : true;
 }
 
 }

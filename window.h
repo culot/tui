@@ -33,7 +33,13 @@ namespace tui {
 class Window {
  public:
   Window();
+  Window(int width, int height, int xpos = 0, int ypos = 0);
   ~Window();
+
+  void draw();
+  void resize(int width, int height);
+  void move(int xpos, int ypos);
+  void toggleBorder();
 
  private:
   class Impl;
