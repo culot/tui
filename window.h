@@ -37,10 +37,13 @@ class Window {
   Window(int width, int height, int xpos = 0, int ypos = 0);
   ~Window();
 
+  void highlightCursorLine(bool highlight);
   void draw();
   void print(const std::string& line);
   void resize(int width, int height);
   void move(int xpos, int ypos);
+  void moveCursorDown();
+  void moveCursorUp();
 
  private:
   class Impl;

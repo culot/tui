@@ -39,7 +39,10 @@ class Window::Impl {
 
   int ypos {0};
   int xpos {0};
-  int cursorLine {0};
+  int cursorLine {1};
+  int printLine {1};
+
+  bool highlightCursorLine {true};
 };
 
 
@@ -58,13 +61,20 @@ Window::~Window() {
   delwin(impl_->win);
 }
 
+void Window::highlightCursorLine(bool highlight) {
+  impl_->highlightCursorLine = highlight;
+}
+
 void Window::draw() {
   box(impl_->win, 0, 0);
+  if (impl_->highlightCursorLine) {
+    mvwchgat(impl_->win, impl_->cursorLine, 1, impl_->width - 2, A_REVERSE, 0, nullptr);
+  }
   wrefresh(impl_->win);
 }
 
 void Window::print(const std::string& line) {
-  mvwaddstr(impl_->win, ++impl_->cursorLine, impl_->xpos + 1, line.c_str());
+  mvwaddstr(impl_->win, impl_->printLine++, impl_->xpos + 1, line.c_str());
   wnoutrefresh(impl_->win);
 }
 
@@ -78,6 +88,14 @@ void Window::move(int xpos, int ypos) {
   impl_->xpos = xpos;
   impl_->ypos = ypos;
   mvwin(impl_->win, impl_->ypos, impl_->xpos);
+}
+
+void Window::moveCursorDown() {
+  ++impl_->cursorLine;
+}
+
+void Window::moveCursorUp() {
+  --impl_->cursorLine;
 }
 
 }
