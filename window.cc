@@ -42,7 +42,10 @@ class Window::Impl {
   int cursorLine {1};
   int printLine {1};
 
-  bool highlightCursorLine {true};
+  bool cursorLineHighlighted {true};
+
+  void highlightCursorLine();
+  void unhighlightCursorLine();
 };
 
 
@@ -61,21 +64,18 @@ Window::~Window() {
   delwin(impl_->win);
 }
 
-void Window::highlightCursorLine(bool highlight) {
-  impl_->highlightCursorLine = highlight;
+void Window::cursorLineHighlighted(bool highlight) {
+  impl_->cursorLineHighlighted = highlight;
 }
 
 void Window::draw() {
   box(impl_->win, 0, 0);
-  if (impl_->highlightCursorLine) {
-    mvwchgat(impl_->win, impl_->cursorLine, 1, impl_->width - 2, A_REVERSE, 0, nullptr);
-  }
+  impl_->highlightCursorLine();
   wrefresh(impl_->win);
 }
 
 void Window::print(const std::string& line) {
   mvwaddstr(impl_->win, impl_->printLine++, impl_->xpos + 1, line.c_str());
-  wnoutrefresh(impl_->win);
 }
 
 void Window::resize(int width, int height) {
@@ -91,11 +91,25 @@ void Window::move(int xpos, int ypos) {
 }
 
 void Window::moveCursorDown() {
+  impl_->unhighlightCursorLine();
   ++impl_->cursorLine;
 }
 
 void Window::moveCursorUp() {
+  impl_->unhighlightCursorLine();
   --impl_->cursorLine;
+}
+
+void Window::Impl::highlightCursorLine() {
+  if (cursorLineHighlighted) {
+    mvwchgat(win, cursorLine, 1, width - 2, A_REVERSE, 0, nullptr);
+  }
+}
+
+void Window::Impl::unhighlightCursorLine() {
+  if (cursorLineHighlighted) {
+    mvwchgat(win, cursorLine, 1, width - 2, A_NORMAL, 0, nullptr);
+  }
 }
 
 }

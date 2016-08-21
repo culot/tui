@@ -34,6 +34,7 @@ int main(int argc, char** argv) {
   initscr();
   cbreak();
   noecho();
+  keypad(stdscr, TRUE);
   curs_set(0);
   refresh();
 
@@ -54,10 +55,20 @@ int main(int argc, char** argv) {
 
   refresh();
 
-  getch();
-
-  clear();
-  endwin();
-
-  return 0;
+  for (;;) {
+    switch (getch()) {
+    case KEY_DOWN:
+      myWin.moveCursorDown();
+      break;
+    case KEY_UP:
+      myWin.moveCursorUp();
+      break;
+    case 'q':
+      clear();
+      endwin();
+      return 0;
+    }
+    myWin.draw();
+    myWin2.draw();
+  }
 }
