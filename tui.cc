@@ -50,9 +50,16 @@ int main(int argc, char** argv) {
   }
   myWin.draw();
 
-//  tui::Window myWin2(COLS, LINES - 11, 0, 10);
-//  myWin2.cursorLineHighlighted(false);
-//  myWin2.draw();
+  tui::Window myWin2(COLS, LINES - 11, 0, 10);
+  myWin2.print("abc");
+  myWin2.print("def");
+  myWin2.print("ghi");
+  myWin2.print("jkl");
+  myWin2.print("mno");
+  myWin2.print("pqr");
+  myWin2.print("stu");
+  myWin2.cursorLineHighlighted(false);
+  myWin2.draw();
 
   refresh();
 
