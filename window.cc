@@ -65,7 +65,7 @@ class Window::Impl {
   int widthView {COLS};
 
   int y {0};
-  int x {0};
+  int x {0};  // XXX Useless
   int yView {0};
   int xView {0};
   int yCursor {0};
@@ -73,6 +73,7 @@ class Window::Impl {
 
   bool cursorLineHighlighted {true};
 
+  void createWindow();
   void highlightCursorLine();
   void unhighlightCursorLine();
 };
@@ -80,14 +81,23 @@ class Window::Impl {
 
 Window::Window()
   : impl_{new Impl} {
-  impl_->win = newwin(impl_->height, impl_->width, impl_->yView, impl_->xView);
-  impl_->pad = newpad(impl_->height - 2, impl_->width - 2); // -2 for borders
+  impl_->createWindow();
 }
 
 Window::Window(int width, int height, int x, int y)
-  : Window() {
-  resize(width, height);
-  move(x, y);
+  : impl_{new Impl} {
+  impl_->width = width;
+  impl_->widthView = width;
+  impl_->height = height;
+  impl_->heightView = height;
+  impl_->xView = x;
+  impl_->yView = y;
+  impl_->createWindow();
+}
+
+void Window::Impl::createWindow() {
+  win = newwin(heightView, widthView, yView, xView);
+  pad = newpad(height - 2, width - 2); // -2 for borders
 }
 
 Window::~Window() {
@@ -115,18 +125,8 @@ void Window::draw() {
 
 void Window::print(const std::string& line) {
   mvwaddstr(impl_->pad, impl_->yPrint++, impl_->x, line.c_str());
-}
-
-void Window::resize(int width, int height) {
-  impl_->widthView = width;
-  impl_->heightView = height;
-  wresize(impl_->win, impl_->heightView, impl_->widthView);
-}
-
-void Window::move(int x, int y) {
-  impl_->xView = x;
-  impl_->yView = y;
-  wmove(impl_->win, impl_->yView, impl_->xView);
+  // XXX handle the case when text is too large to fit
+  // XXX ie, pad resizing
 }
 
 void Window::scrollDown() {

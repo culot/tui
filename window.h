@@ -34,14 +34,13 @@ namespace tui {
 class Window {
  public:
   Window();
-  Window(int width, int height, int xpos = 0, int ypos = 0);
+  // XXX Create Dimension & Position structures
+  Window(int width, int height, int x = 0, int y = 0);
   ~Window();
 
   void cursorLineHighlighted(bool highlight);
   void draw();
   void print(const std::string& line);
-  void resize(int width, int height);
-  void move(int x, int y);
   void scrollDown();
   void scrollUp();
   void moveCursorDown();
