@@ -39,7 +39,7 @@ int main(int argc, char** argv) {
   refresh();
 
   tui::Window myWin(COLS, 10, 0, 0);
-  for (auto i = 0; i < 10; ++i) {
+  for (auto i = 0; i < 2; ++i) {
     myWin.print("Lorem ipsum dolor sit amet,");
     myWin.print("consectetur adipiscing elit,");
     myWin.print("sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.");
@@ -50,8 +50,9 @@ int main(int argc, char** argv) {
   }
   myWin.draw();
 
-  tui::Window myWin2(COLS, LINES - 11, 0, 10);
-  myWin2.draw();
+//  tui::Window myWin2(COLS, LINES - 11, 0, 10);
+//  myWin2.cursorLineHighlighted(false);
+//  myWin2.draw();
 
   refresh();
 
@@ -69,6 +70,5 @@ int main(int argc, char** argv) {
       return 0;
     }
     myWin.draw();
-    myWin2.draw();
   }
 }
