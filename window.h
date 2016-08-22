@@ -41,7 +41,9 @@ class Window {
   void draw();
   void print(const std::string& line);
   void resize(int width, int height);
-  void move(int xpos, int ypos);
+  void move(int x, int y);
+  void scrollDown();
+  void scrollUp();
   void moveCursorDown();
   void moveCursorUp();
 
