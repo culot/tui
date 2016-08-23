@@ -91,6 +91,8 @@ Window::Window(const Size& size, const Pos& pos) : impl_{new Impl} {
 void Window::Impl::createWindow() {
   win = newwin(sizeView.height, sizeView.width, posView.y, posView.x);
   pad = newpad(sizePad.height, sizePad.width);
+  box(win, 0, 0);
+  wnoutrefresh(win);
 }
 
 Window::~Window() {
@@ -103,8 +105,6 @@ void Window::cursorLineHighlighted(bool highlight) {
 }
 
 void Window::draw() {
-  box(impl_->win, 0, 0); // XXX No need to redraw border each time, do it only once
-  wnoutrefresh(impl_->win);
   impl_->highlightCursorLine();
   pnoutrefresh(impl_->pad,
                impl_->posPad.y,
