@@ -74,7 +74,7 @@ class Window::Impl {
   bool cursorLineHighlighted {true};
 
   void createWindow();
-  void extendPadIfNeeded();
+  void extendPrintAre();
   void highlightCursorLine();
   void unhighlightCursorLine();
 };
@@ -125,7 +125,7 @@ void Window::draw() {
 }
 
 void Window::print(const std::string& line) {
-  impl_->extendPadIfNeeded();
+  impl_->extendPrintAre();
   mvwaddstr(impl_->pad, impl_->yPrint++, impl_->x, line.c_str());
 }
 
@@ -159,7 +159,7 @@ void Window::moveCursorUp() {
   scrollUp();
 }
 
-void Window::Impl::extendPadIfNeeded() {
+void Window::Impl::extendPrintAre() {
   if (yPrint >= height - 2) {
     height *= 2;
     wresize(pad, height, width);
