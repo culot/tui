@@ -33,9 +33,19 @@ namespace tui {
 
 class Window {
  public:
+
+  struct Size {
+    int width;
+    int height;
+  };
+
+  struct Pos {
+    int x;
+    int y;
+  };
+
   Window();
-  // XXX Create Dimension & Position structures
-  Window(int width, int height, int x = 0, int y = 0);
+  Window(const Size& size, const Pos& pos);
   ~Window();
 
   void cursorLineHighlighted(bool highlight);

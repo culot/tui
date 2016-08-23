@@ -38,7 +38,7 @@ int main(int argc, char** argv) {
   curs_set(0);
   refresh();
 
-  tui::Window myWin(COLS, 10, 0, 0);
+  tui::Window myWin({COLS, 10}, {0, 0});
   for (auto i = 0; i < 2; ++i) {
     myWin.print("Lorem ipsum dolor sit amet,");
     myWin.print("consectetur adipiscing elit,");
@@ -50,7 +50,7 @@ int main(int argc, char** argv) {
   }
   myWin.draw();
 
-  tui::Window myWin2(COLS, LINES - 11, 0, 10);
+  tui::Window myWin2({COLS, LINES - 11}, {0, 10});
   myWin2.print("abc");
   myWin2.print("def");
   myWin2.print("ghi");

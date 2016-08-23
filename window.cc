@@ -59,17 +59,13 @@ class Window::Impl {
      |                                   screen |
      +------------------------------------------+
   */
-  int height {LINES};
-  int width {COLS};
-  int heightView {LINES};
-  int widthView {COLS};
+  Size  sizePad    {LINES, COLS};
+  Size  sizeView   {LINES, COLS};
 
-  int y {0};
-  int x {0};  // XXX Useless
-  int yView {0};
-  int xView {0};
-  int yCursor {0};
-  int yPrint {0};
+  Pos   posPad     {0, 0};
+  Pos   posView    {0, 0};
+  Pos   posCursor  {0, 0};
+  Pos   posPrint   {0, 0};
 
   bool cursorLineHighlighted {true};
 
@@ -80,25 +76,21 @@ class Window::Impl {
 };
 
 
-Window::Window()
-  : impl_{new Impl} {
+Window::Window() : impl_{new Impl} {
   impl_->createWindow();
 }
 
-Window::Window(int width, int height, int x, int y)
-  : impl_{new Impl} {
-  impl_->width = width;
-  impl_->widthView = width;
-  impl_->height = height;
-  impl_->heightView = height;
-  impl_->xView = x;
-  impl_->yView = y;
+Window::Window(const Size& size, const Pos& pos) : impl_{new Impl} {
+  impl_->sizeView = size;
+  impl_->sizePad.width = size.width - 2;
+  impl_->sizePad.height = size.width - 2;
+  impl_->posView = pos;
   impl_->createWindow();
 }
 
 void Window::Impl::createWindow() {
-  win = newwin(heightView, widthView, yView, xView);
-  pad = newpad(height - 2, width - 2); // -2 for borders
+  win = newwin(sizeView.height, sizeView.width, posView.y, posView.x);
+  pad = newpad(sizePad.height, sizePad.width);
 }
 
 Window::~Window() {
@@ -111,70 +103,70 @@ void Window::cursorLineHighlighted(bool highlight) {
 }
 
 void Window::draw() {
-  box(impl_->win, 0, 0);
+  box(impl_->win, 0, 0); // XXX No need to redraw border each time, do it only once
   wnoutrefresh(impl_->win);
   impl_->highlightCursorLine();
   pnoutrefresh(impl_->pad,
-               impl_->y,
-               impl_->x,
-               impl_->yView + 1,
-               impl_->xView + 1,
-               impl_->yView + impl_->heightView - 2,
-               impl_->xView + impl_->widthView - 2);
+               impl_->posPad.y,
+               impl_->posPad.x,
+               impl_->posView.y + 1,
+               impl_->posView.x + 1,
+               impl_->posView.y + impl_->sizeView.height - 2,
+               impl_->posView.x + impl_->sizeView.width - 2);
   refresh();
 }
 
 void Window::print(const std::string& line) {
   impl_->extendPrintAre();
-  mvwaddstr(impl_->pad, impl_->yPrint++, impl_->x, line.c_str());
+  mvwaddstr(impl_->pad, impl_->posPrint.y++, impl_->posPad.x, line.c_str());
 }
 
 void Window::scrollDown() {
-  if (impl_->yCursor >= impl_->heightView - 2
-      && impl_->yPrint > impl_->y + impl_->heightView) {
-    ++impl_->y;
+  if (impl_->posCursor.y >= impl_->sizeView.height - 2
+      && impl_->posPrint.y > impl_->posPad.y + impl_->sizeView.height) {
+    ++impl_->posPad.y;
   }
 }
 
 void Window::scrollUp() {
-  if (impl_->yCursor < impl_->y && impl_->y > 0) {
-    --impl_->y;
+  if (impl_->posCursor.y < impl_->posPad.y && impl_->posPad.y > 0) {
+    --impl_->posPad.y;
   }
 }
 
   void Window::moveCursorDown() {
-  if (impl_->yCursor + impl_->y < impl_->height
-      && impl_->y + impl_->yCursor - 1 < impl_->yPrint) {
+  if (impl_->posCursor.y + impl_->posPad.y < impl_->sizePad.height
+      && impl_->posPad.y + impl_->posCursor.y - 1 < impl_->posPrint.y) {
     impl_->unhighlightCursorLine();
-    ++impl_->yCursor;
+    ++impl_->posCursor.y;
   }
   scrollDown();
 }
 
 void Window::moveCursorUp() {
-  if (impl_->yCursor > 0) {
+  if (impl_->posCursor.y > 0) {
     impl_->unhighlightCursorLine();
-    --impl_->yCursor;
+    --impl_->posCursor.y;
   }
   scrollUp();
 }
 
 void Window::Impl::extendPrintAre() {
-  if (yPrint >= height - 2) {
-    height *= 2;
-    wresize(pad, height, width);
+  if (posPrint.y >= sizePad.height) {
+    sizePad.height *= 2;
+    wresize(pad, sizePad.height, sizePad.width);
   }
 }
 
 void Window::Impl::highlightCursorLine() {
   if (cursorLineHighlighted) {
-    mvwchgat(pad, yCursor, 0, width, A_REVERSE, 0, nullptr);
+    mvwchgat(pad, posCursor.y, 0, sizePad.width, A_REVERSE, 0, nullptr);
   }
 }
 
 void Window::Impl::unhighlightCursorLine() {
   if (cursorLineHighlighted) {
-    mvwchgat(pad, yCursor, 0, width, A_NORMAL, 0, nullptr);
+    mvwchgat(pad, posCursor.y, 0, sizePad.width, A_NORMAL, 0, nullptr);
   }
 }
 
