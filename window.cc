@@ -74,6 +74,7 @@ class Window::Impl {
   bool cursorLineHighlighted {true};
 
   void createWindow();
+  void extendPadIfNeeded();
   void highlightCursorLine();
   void unhighlightCursorLine();
 };
@@ -124,9 +125,8 @@ void Window::draw() {
 }
 
 void Window::print(const std::string& line) {
+  impl_->extendPadIfNeeded();
   mvwaddstr(impl_->pad, impl_->yPrint++, impl_->x, line.c_str());
-  // XXX handle the case when text is too large to fit
-  // XXX ie, pad resizing
 }
 
 void Window::scrollDown() {
@@ -157,6 +157,13 @@ void Window::moveCursorUp() {
     --impl_->yCursor;
   }
   scrollUp();
+}
+
+void Window::Impl::extendPadIfNeeded() {
+  if (yPrint >= height - 2) {
+    height *= 2;
+    wresize(pad, height, width);
+  }
 }
 
 void Window::Impl::highlightCursorLine() {
